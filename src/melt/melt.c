@@ -146,8 +146,12 @@ static void transport_action( mlt_producer producer, char *value )
 			case 'H':
 				if ( producer != NULL )
 				{
+                    //获取每秒的帧数，这里减去了一分钟
 					position -= mlt_producer_get_fps( producer ) * 60;
+
 					mlt_consumer_purge( consumer );
+                    
+                    //定位到producer的特定位置
 					mlt_producer_seek( producer, position );
 					mlt_events_fire( jack, "jack-seek", &position, NULL );
 				}
@@ -442,6 +446,7 @@ static void transport( mlt_producer producer, mlt_consumer consumer )
 			if ( value != -1 )
 			{
 				char string[ 2 ] = { value, 0 };
+                //传输
 				transport_action( producer, string );
 			}
 

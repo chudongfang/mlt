@@ -57,14 +57,18 @@ typedef struct mlt_events_struct *mlt_events;
  *
  */
 
+
+
 struct mlt_event_struct
 {
 	mlt_events owner;
 	int ref_count;
 	int block_count;
-	mlt_listener listener;
+	mlt_listener listener; //对应一个函数回调
 	void *service;
 };
+
+
 
 /** Increment the reference count on self event.
  *
@@ -77,6 +81,7 @@ void mlt_event_inc_ref( mlt_event self )
 	if ( self != NULL )
 		self->ref_count ++;
 }
+
 
 /** Increment the block count on self event.
  *
@@ -114,6 +119,7 @@ void mlt_event_close( mlt_event self )
 	{
 		if ( -- self->ref_count == 1 )
 			self->owner = NULL;
+
 		if ( self->ref_count <= 0 )
 		{
 #ifdef _MLT_EVENT_CHECKS_
@@ -137,6 +143,7 @@ static void mlt_events_close( mlt_events );
  * \param self a properties list
  */
 
+//初始化，并分配空间
 void mlt_events_init( mlt_properties self )
 {
 	mlt_events events = mlt_events_fetch( self );
@@ -148,15 +155,19 @@ void mlt_events_init( mlt_properties self )
 	}
 }
 
+
+
 /** Register an event and transmitter.
  *
  * \public \memberof mlt_events_struct
  * \param self a properties list
  * \param id the name of an event
- * \param transmitter the callback function to send an event message
+ * \param transmitter the callback function to send an event message   
  * \return true if there was an error
  */
 
+
+//mlt_transmitter  transmitter 为一个函数回调
 int mlt_events_register( mlt_properties self, const char *id, mlt_transmitter transmitter )
 {
 	int error = 1;
@@ -165,13 +176,17 @@ int mlt_events_register( mlt_properties self, const char *id, mlt_transmitter tr
 	{
 		mlt_properties list = events->list;
 		char temp[ 128 ];
+        //把transmitter 存储在 list 中
 		error = mlt_properties_set_data( list, id, transmitter, 0, NULL, NULL );
 		sprintf( temp, "list:%s", id );
+        //如果找不到对应的properties，就new一个properties
 		if ( mlt_properties_get_data( list, temp, NULL ) == NULL )
 			mlt_properties_set_data( list, temp, mlt_properties_new( ), 0, ( mlt_destructor )mlt_properties_close, NULL );
 	}
 	return error;
 }
+
+
 
 /** Fire an event.
  *
@@ -204,7 +219,9 @@ int mlt_events_fire( mlt_properties self, const char *id, ... )
 			args[ i ] = va_arg( alist, void * );
 		while( args[ i ++ ] != NULL );
 		va_end( alist );
+            
 
+        //遍历所有的listeners回调函数
 		if ( listeners != NULL )
 		{
 			for ( i = 0; i < mlt_properties_count( listeners ); i ++ )
@@ -212,10 +229,13 @@ int mlt_events_fire( mlt_properties self, const char *id, ... )
 				mlt_event event = mlt_properties_get_data_at( listeners, i, NULL );
 				if ( event != NULL && event->owner != NULL && event->block_count == 0 )
 				{
+
 					if ( transmitter != NULL )
 						transmitter( event->listener, event->owner, event->service, args );
 					else
+                        //调用listener回调,并把相应的参数传给对应的对象
 						event->listener( event->owner, event->service );
+
 					++result;
 				}
 			}
