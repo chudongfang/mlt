@@ -268,6 +268,7 @@ static mlt_consumer create_consumer( mlt_profile profile, char *id )
 	char *arg = myid ? strchr( myid, ':' ) : NULL;
 	if ( arg != NULL )
 		*arg ++ = '\0';
+    //从factory获取consumer
 	mlt_consumer consumer = mlt_factory_consumer( profile, myid, arg );
 	if ( consumer != NULL )
 	{
@@ -304,6 +305,7 @@ static void load_consumer( mlt_consumer *consumer, mlt_profile profile, int argc
 
 		if ( *consumer )
 			mlt_consumer_close( *consumer );
+        //创建consumer
 		*consumer = create_consumer( profile, ( qglsl? "qglsl" : "multi" ) );
 		mlt_properties properties = MLT_CONSUMER_PROPERTIES( *consumer );
 		for ( i = 1; i < argc; i ++ )
@@ -871,6 +873,8 @@ query_all:
 
 	// Look for the consumer option to load profile settings from consumer properties
 	backup_profile = mlt_profile_clone( profile );
+
+    //加载consumer，根据参数，通过加载动态库的方式，从properties 获取对应的consumer
 	load_consumer( &consumer, profile, argc, argv );
 
 	// If the consumer changed the profile, then it is explicit.
@@ -982,6 +986,7 @@ query_all:
 
 			// Start the consumer
 			mlt_events_listen( properties, consumer, "consumer-fatal-error", ( mlt_listener )on_fatal_error );
+            //调用对应回调，启动consumer
 			if ( mlt_consumer_start( consumer ) == 0 )
 			{
 				// Try to exit gracefully upon these signals

@@ -233,7 +233,9 @@ void *mlt_repository_create( mlt_repository self, mlt_profile profile, mlt_servi
 	if ( properties != NULL )
 	{
 		mlt_register_callback symbol_ptr = mlt_properties_get_data( properties, "symbol", NULL );
+        
 
+        //利用回调函数,创建service
 		// Construct the service
 		return ( symbol_ptr != NULL ) ? symbol_ptr( profile, type, service, input ) : NULL;
 	}

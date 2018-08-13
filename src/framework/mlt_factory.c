@@ -425,12 +425,15 @@ mlt_consumer mlt_factory_consumer( mlt_profile profile, const char *service, con
 
 	// Offer the application the chance to 'create'
 	mlt_events_fire( event_object, "consumer-create-request", service, input, &obj, NULL );
-
+    
+    //根据输入的参数获取
 	if ( obj == NULL )
 	{
 		obj = mlt_repository_create( repository, profile, consumer_type, service, input );
 	}
 
+
+    //默认获取
 	if ( obj == NULL )
 	{
 		if ( !strcmp( service, "sdl2" ) )

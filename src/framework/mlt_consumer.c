@@ -596,6 +596,8 @@ int mlt_consumer_start( mlt_consumer self )
 		consumer_read_ahead_start( self );
 #endif
 
+
+    //调用对应回调 self->start ，这个回调的设置来自mlt_factory_consumer
 	// Start the service
 	if ( self->start != NULL )
 		error = self->start( self );
