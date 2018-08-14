@@ -37,6 +37,7 @@
 
 #include "io.h"
 
+//全局变量，melt为一个producer
 static mlt_producer melt = NULL;
 
 static void stop_handler(int signum)
@@ -719,11 +720,13 @@ static void query_vcodecs( )
 	}
 }
 
+
 static void on_fatal_error( mlt_properties owner, mlt_consumer consumer )
 {
 	mlt_properties_set_int( MLT_CONSUMER_PROPERTIES(consumer), "done", 1 );
 	mlt_properties_set_int( MLT_CONSUMER_PROPERTIES(consumer), "melt_error", 1 );
 }
+
 
 int main( int argc, char **argv )
 {
@@ -745,6 +748,7 @@ int main( int argc, char **argv )
 	signal( SIGABRT, abnormal_exit_handler );
 
 	// Construct the factory
+    // 加载本地仓库
 	mlt_repository repo = mlt_factory_init( NULL );
 
 	for ( i = 1; i < argc; i ++ )
@@ -868,6 +872,8 @@ query_all:
 	if ( !is_silent && !isatty( STDIN_FILENO ) && !is_progress )
 		is_progress = 1;
 
+
+
 	// Create profile if not set explicitly
 	if ( getenv( "MLT_PROFILE" ) )
 		profile = mlt_profile_init( NULL );
@@ -875,6 +881,8 @@ query_all:
 		profile = mlt_profile_init( NULL );
 	else
 		profile->is_explicit = 1;
+
+
 
 	// Look for the consumer option to load profile settings from consumer properties
 	backup_profile = mlt_profile_clone( profile );
@@ -990,7 +998,9 @@ query_all:
 			mlt_consumer_connect( consumer, MLT_PRODUCER_SERVICE( melt ) );
 
 			// Start the consumer
+            // 注册回调
 			mlt_events_listen( properties, consumer, "consumer-fatal-error", ( mlt_listener )on_fatal_error );
+
             //调用对应回调，启动consumer
 			if ( mlt_consumer_start( consumer ) == 0 )
 			{

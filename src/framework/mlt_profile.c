@@ -117,6 +117,7 @@ mlt_profile mlt_profile_init( const char *name )
 			profile = mlt_profile_select( "dv_pal" );
 
 		// If still not loaded (no profile files), default to PAL
+        // 设置默认效果
 		if ( profile == NULL )
 		{
 			profile = calloc( 1, sizeof( struct mlt_profile_s ) );

@@ -259,6 +259,7 @@ int mlt_service_connect_producer( mlt_service self, mlt_service producer, int in
 	}
 }
 
+
 /** Insert a producer connected to the service.
  *
  * mlt_service_connect_producer() appends or overwrites a producer at input
@@ -335,6 +336,8 @@ int mlt_service_insert_producer( mlt_service self, mlt_service producer, int ind
 		return -1;
 	}
 }
+
+
 
 /** Remove the N-th producer.
  *

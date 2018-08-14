@@ -198,6 +198,7 @@ int mlt_events_register( mlt_properties self, const char *id, mlt_transmitter tr
  * \return the number of listeners
  */
 
+//根据id找到对应的listeners回调,并把参数传给对应的回调
 int mlt_events_fire( mlt_properties self, const char *id, ... )
 {
 	int result = 0;
@@ -206,14 +207,16 @@ int mlt_events_fire( mlt_properties self, const char *id, ... )
 	{
 		int i = 0;
 		va_list alist;
-		void *args[ 10 ];
+		void *args[ 10 ]; //参数最多10个
 		mlt_properties list = events->list;
 		mlt_properties listeners = NULL;
 		char temp[ 128 ];
 		mlt_transmitter transmitter = mlt_properties_get_data( list, id, NULL );
 		sprintf( temp, "list:%s", id );
 		listeners = mlt_properties_get_data( list, temp, NULL );
+        
 
+        //获取传入的多个参数
 		va_start( alist, id );
 		do
 			args[ i ] = va_arg( alist, void * );
@@ -229,13 +232,12 @@ int mlt_events_fire( mlt_properties self, const char *id, ... )
 				mlt_event event = mlt_properties_get_data_at( listeners, i, NULL );
 				if ( event != NULL && event->owner != NULL && event->block_count == 0 )
 				{
-
+                    //tramsmitter 
 					if ( transmitter != NULL )
 						transmitter( event->listener, event->owner, event->service, args );
 					else
                         //调用listener回调,并把相应的参数传给对应的对象
 						event->listener( event->owner, event->service );
-
 					++result;
 				}
 			}
@@ -243,6 +245,8 @@ int mlt_events_fire( mlt_properties self, const char *id, ... )
 	}
 	return result;
 }
+
+
 
 /** Register a listener.
  *
@@ -257,6 +261,7 @@ int mlt_events_fire( mlt_properties self, const char *id, ... )
 mlt_event mlt_events_listen( mlt_properties self, void *service, const char *id, mlt_listener listener )
 {
 	mlt_event event = NULL;
+    //获取当前events
 	mlt_events events = mlt_events_fetch( self );
 	if ( events != NULL )
 	{
@@ -282,7 +287,9 @@ mlt_event mlt_events_listen( mlt_properties self, void *service, const char *id,
 					first_null = i;
 				}
 			}
-
+                
+            
+            //如果以前没有注册，则从新分配一个，并且给其赋值
 			if ( event == NULL )
 			{
 				event = malloc( sizeof( struct mlt_event_struct ) );
@@ -301,7 +308,6 @@ mlt_event mlt_events_listen( mlt_properties self, void *service, const char *id,
 					mlt_event_inc_ref( event );
 				}
 			}
-
 		}
 	}
 	return event;
@@ -498,7 +504,7 @@ static mlt_events mlt_events_fetch( mlt_properties self )
  * \param self a properties list
  * \param events an events object
  */
-
+//设置mlt_properties 
 static void mlt_events_store( mlt_properties self, mlt_events events )
 {
 	if ( self != NULL && events != NULL )

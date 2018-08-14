@@ -751,6 +751,8 @@ static inline long time_difference( struct timeval *time1 )
  * \param arg a consumer
  */
 
+
+//异步拉取
 static void *consumer_read_ahead_thread( void *arg )
 {
 	// The argument is the consumer
@@ -803,9 +805,11 @@ static void *consumer_read_ahead_thread( void *arg )
 	set_audio_format( self );
 	set_image_format( self );
 
+    //调用回调
 	mlt_events_fire( properties, "consumer-thread-started", NULL );
 
 	// Get the first frame
+    // 获取第一帧
 	frame = mlt_consumer_get_frame( self );
 
 	if ( frame )
@@ -1792,6 +1796,8 @@ static void mlt_thread_create( mlt_consumer self, thread_function_t function )
 		}
 	}
 }
+
+
 
 static void transmit_thread_join( mlt_listener listener, mlt_properties owner, mlt_service self, void **args )
 {

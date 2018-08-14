@@ -53,12 +53,16 @@
 
 /** holds the full path to the modules directory - initialized and retained for the entire session */
 static char *mlt_directory = NULL;
+
 /** a global properties list for holding environment config data and things needing session-oriented cleanup */
 static mlt_properties global_properties = NULL;
+
 /** the global repository singleton */
 static mlt_repository repository = NULL;
+
 /** the events object for the factory events */
 static mlt_properties event_object = NULL;
+
 /** for tracking the unique_id set on each constructed service */
 static int unique_id = 0;
 
@@ -332,9 +336,12 @@ mlt_producer mlt_factory_producer( mlt_profile profile, const char *service, con
 	// Pick up the default normalising producer if necessary
 	if ( service == NULL )
 		service = mlt_environment( "MLT_PRODUCER" );
+    
 
+    //执行对应回调
 	// Offer the application the chance to 'create'
 	mlt_events_fire( event_object, "producer-create-request", service, resource, &obj, NULL );
+
 
 	// Try to instantiate via the specified service
 	if ( obj == NULL )
@@ -349,6 +356,8 @@ mlt_producer mlt_factory_producer( mlt_profile profile, const char *service, con
 	}
 	return obj;
 }
+
+
 
 /** Fetch a filter from the repository.
  *
