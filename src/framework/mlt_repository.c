@@ -58,6 +58,8 @@ struct mlt_repository_s
  * \return a new repository or NULL if failed
  */
 
+
+//初始化,mlt_repository ,从动态库中读对应的函数，并进行注册
 mlt_repository mlt_repository_init( const char *directory )
 {
 	// Safety check
@@ -89,7 +91,7 @@ mlt_repository mlt_repository_init( const char *directory )
 	strcat( newpath, syspath );
 	putenv(newpath);
 #endif
-
+        
 	// Iterate over files
 	for ( i = 0; i < count; i++ )
 	{

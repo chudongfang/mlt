@@ -195,7 +195,8 @@ mlt_repository mlt_factory_init( const char *directory )
 #else
 		mlt_directory = strdup( directory );
 #endif
-		
+	
+        //初始化内存池
 		// Initialise the pool
 		mlt_pool_init( );
 

@@ -416,6 +416,7 @@ static void transport( mlt_producer producer, mlt_consumer consumer )
 	int total_length = mlt_producer_get_length( producer );
 	int last_position = 0;
 
+    //在传输过程中检测是否有输入，并对输入进行判断
 	if ( mlt_properties_get_int( properties, "done" ) == 0 && !mlt_consumer_is_stopped( consumer ) )
 	{
 		if ( !silent && !progress )
@@ -434,7 +435,7 @@ static void transport( mlt_producer producer, mlt_consumer consumer )
 			fprintf( stderr, "|                0 = restart, q = quit, space = play                  |\n" );
 			fprintf( stderr, "+---------------------------------------------------------------------+\n" );
 		}
-
+        //在传输过程中检测是否有输入，并对输入进行判断
 		while( mlt_properties_get_int( properties, "done" ) == 0 && !mlt_consumer_is_stopped( consumer ) )
 		{
 			int value = ( silent || progress || is_getc )? -1 : term_read( );
@@ -1002,6 +1003,7 @@ query_all:
 			mlt_events_listen( properties, consumer, "consumer-fatal-error", ( mlt_listener )on_fatal_error );
 
             //调用对应回调，启动consumer
+            //这里会开多个线程进行拉取帧
 			if ( mlt_consumer_start( consumer ) == 0 )
 			{
 				// Try to exit gracefully upon these signals
@@ -1013,8 +1015,10 @@ query_all:
 #endif
 
 				// Transport functionality
-				transport( melt, consumer );
-				
+                //在这个过程中检测是否有输入，并对输入进行响应
+				transport( melt, consumer );			   
+
+                //停止consumer
 				// Stop the consumer
 				mlt_consumer_stop( consumer );
 			}	

@@ -1,0 +1,11 @@
+docker 打包环境：
+
+
+sudo docker run -i -t --network bridge --ip 192.168.5.3 reg.docker.alibaba-inc.com/mediagroup/alios7_test /bin/bash
+
+
+
+sudo docker run -i -t --network bridge --ip 192.168.5.3 reg.docker.alibaba-inc.com/mediagroup/gpu_mlt /bin/bash
+
+#echo $LD_LIBRARY_PATH
+/usr/meltdir/20180305/lib/frei0r-1:/usr/meltdir/20180305/Qt-5.9.1/lib:/usr/meltdir/20180305/lib:/lib:/lib64:/usr/lib:/usr/lib64::
